@@ -17,8 +17,39 @@ class _GPSScreenState extends State<GPSScreen> {
   }
 
   Future<void> _getLocation() async {
-    // Lógica para obtener la ubicación GPS
+  bool serviceEnabled;
+  LocationPermission permission;
+
+  // Verifica si el servicio de GPS está habilitado
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    // Servicio de GPS deshabilitado
+    return;
   }
+
+  // Verifica los permisos de ubicación
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      // Permisos denegados, no podemos proceder
+      return;
+    }
+  }
+
+  if (permission == LocationPermission.deniedForever) {
+    // Permisos denegados permanentemente
+    return;
+  }
+
+  // Obtener la posición actual
+  Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high);
+
+  setState(() {
+    _position = position;
+  });
+}
 
   @override
   Widget build(BuildContext context) {

@@ -65,19 +65,21 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
   }
 
   Future<void> _speak() async {
-    if (_text.isNotEmpty) {
-      try {
-        var result = await flutterTts.speak(_text);
+  if (_text.isNotEmpty) {
+    try {
+      var result = await flutterTts.speak(_text);
+      if (result == 1) { // Verifica si el resultado es exitoso
         setState(() {
-          _debugInfo += "Resultado de speak(): $result\n";
-        });
-      } catch (e) {
-        setState(() {
-          _debugInfo += "Error al hablar: $e\n";
+          _debugInfo += "Texto reproducido correctamente\n";
         });
       }
+    } catch (e) {
+      setState(() {
+        _debugInfo += "Error al hablar: $e\n";
+      });
     }
   }
+}
 
   Future<void> _stop() async {
     try {
